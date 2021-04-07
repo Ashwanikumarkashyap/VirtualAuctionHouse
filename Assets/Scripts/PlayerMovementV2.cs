@@ -4,14 +4,12 @@ using UnityEngine;
 using Photon.Pun;
 
 [RequireComponent(typeof(CharacterController))]
-public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
+public class PlayerMovementV2 : MonoBehaviourPunCallbacks, IPunObservable
 {
 
     //public int currentBid = 100;
 
     public float speed = 20f;
-
-    public Transform avatar;
     private float gravity = 10f;
 
 
@@ -24,9 +22,6 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
     public float minPitch = -85f;
     [Range(0.5f, 5f)]
     public float mouseSensitivity = 2f;
-
-
-
 
     public GameObject dashboard;
     public int[] currentBids;
@@ -110,14 +105,6 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
                 }
             }
 
-            //if (input.getkeydown("space"))
-            //{
-            //    currentbid += 100;
-            //    gameobject auctitem = gameobject.find("auctioninfo");
-            //    tmpro.textmeshpro textobj = auctitem.getcomponent<tmpro.textmeshpro>();
-            //    textobj.settext("current bid $" + currentbid.tostring());
-            //}
-
 
             if (Input.GetKeyDown("tab"))
             {
@@ -135,8 +122,9 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
             if (!dashboard.activeInHierarchy)
             {
                 Move();
+                Look();
             }
-
+            
         }
     }
 
@@ -204,8 +192,6 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
 
     void Move()
     {
-
-
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
         Vector3 direction = new Vector3(horizontal, 0, vertical);
@@ -227,13 +213,17 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
         velocity.y -= gravity;
         cc.Move(velocity * Time.deltaTime);
 
-        var CharacterRotation = cameraTransform.transform.rotation;
-        //cameraTransform.transform.parent.gameObject.transform.eulerAngles = new Vector3(0.0f, CharacterRotation.y, 0f);
-        //var CharacterRotation = cameraTransform.transform.localRotation;
-        CharacterRotation.x = 0;
-        CharacterRotation.z = 0;
+        //var CharacterRotation = cameraTransform.transform.rotation;
+        //CharacterRotation.x = 0;
+        //CharacterRotation.z = 0;
 
-        avatar.rotation = CharacterRotation;
+        //avatar.rotation = CharacterRotation;
+    }
+
+    void Look()
+    {
+        var CharacterRotation = cameraTransform.transform.rotation;
+        transform.eulerAngles = new Vector3(0.0f, CharacterRotation.y, 0f);
     }
 
     //public void changeWalkingAnimation()

@@ -5,8 +5,6 @@ using Photon.Pun;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
-    
-    public GameObject playerPrefab;
 
     public GameObject player1;
     public GameObject player2;
@@ -14,8 +12,6 @@ public class GameManager : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
-        //PhotonNetwork.Instantiate(playerPrefab.name, new Vector3(0, 5, 0), Quaternion.identity);
-
         if (NetworkPlayerManager.localPlayerInstance == null)
         {
             //instantiate the correct player based on the team
