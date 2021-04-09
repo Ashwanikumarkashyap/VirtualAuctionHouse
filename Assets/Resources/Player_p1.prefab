@@ -290,6 +290,8 @@ MonoBehaviour:
   mouseSensitivity: 2
   dashboard: {fileID: 6131989338171971800}
   currentBids: 
+  playerCameraWrapper: {fileID: 6027410637307881629}
+  playerCamera: {fileID: 2699541614725998678}
 --- !u!114 &-8060713691831515562
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -42,10 +42,20 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
     //bool isMoving = false;
     //public bool customMoving = false;
 
+
+    AudioSource boathAudioSource;
+
+    public GameObject playerCameraWrapper;
+    public GameObject playerCamera;
+    //GameObject BoatCamera;
+
+
     private void Start()
     {
         //animator = GetComponentInChildren<Animator>();
 
+        boathAudioSource = GameObject.Find("Boat").GetComponent<AudioSource>();
+        boathAudioSource.Stop();
         cc = GetComponent<CharacterController>();
         if (!photonView.IsMine)
         {
@@ -57,87 +67,101 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
     // Update is called once per frame
     void Update()
     {
-        if (photonView.IsMine)
+        Camera c = gameObject.GetComponentInChildren<Camera>();
+        if (gameObject.GetComponentInChildren<Camera>() != null)
         {
-            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit) && Input.GetKeyDown("space"))
+            if (photonView.IsMine)
             {
-                var selection = hit.transform;
+                var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
 
-                if (selection.CompareTag("AuctionItem"))
+                if (Physics.Raycast(ray, out hit) && Input.GetKeyDown("space"))
                 {
-                    string AuctionItemName = selection.name;
-                    Animator anime;
-                    switch (AuctionItemName)
+                    var selection = hit.transform;
+
+                    if (selection.CompareTag("AuctionItem"))
                     {
-                        case "VanityDeskWhite":
-                            anime  = selection.Find("drawers").GetComponent<Animator>();
-                            animateVanity(anime);
-                            break;
-                        case "Classic_car":
-                            anime = selection.GetComponent<Animator>();
-                            animateVanity(anime);
-                            break;
-                        case "Drone_Guard":
-                            anime = selection.GetComponent<Animator>();
-                            animateDrone(anime);
-                            break;
-                        case "RobotSphere":
-                            anime = selection.GetComponent<Animator>();
-                            animateRobot(anime);
-                            break;
-                        case "Spartan_Warrior":
-                            anime = selection.GetComponent<Animator>();
-                            animateSpartan(anime);
-                            break;
-                        default:
-                            Debug.Log("Default case");
-                            break;
+                        string AuctionItemName = selection.name;
+                        Animator anime;
+                        switch (AuctionItemName)
+                        {
+                            case "OldBoat":
+                                playerCamera.transform.parent = GameObject.Find("BoatCameraWrapper").transform;
+                                //GameObject.Find("Boat").transform.localPosition = new Vector3(-23f, 0f, -90f);
+                                //playerCamera.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+                                boathAudioSource.Play();
+                                break;
+                            case "VanityDeskWhite":
+                                anime = selection.Find("drawers").GetComponent<Animator>();
+                                animateVanity(anime);
+                                break;
+                            case "Classic_car":
+                                anime = selection.GetComponent<Animator>();
+                                animateVanity(anime);
+                                break;
+                            case "Drone_Guard":
+                                anime = selection.GetComponent<Animator>();
+                                animateDrone(anime);
+                                break;
+                            case "RobotSphere":
+                                anime = selection.GetComponent<Animator>();
+                                animateRobot(anime);
+                                break;
+                            case "Spartan_Warrior":
+                                anime = selection.GetComponent<Animator>();
+                                animateSpartan(anime);
+                                break;
+                            default:
+                                Debug.Log("Default case");
+                                break;
+                        }
+
+                        // backend change
+                        int itemId = int.Parse(selection.name.Split('_')[1]);
+                        //currentBid += 100;
+                        currentBids[itemId] += 100;
+
+                        // frontend change
+                        Transform itemCurrentBid = selection.Find("CurrentBid");
+                        TMPro.TextMeshPro bidTextObj = itemCurrentBid.GetComponent<TMPro.TextMeshPro>();
+                        //bidTextObj.SetText("Current Bid $" + currentBid.ToString());
+                        bidTextObj.SetText("Current Bid $" + currentBids[itemId].ToString());
+                    }
+                }
+
+                //if (input.getkeydown("space"))
+                //{
+                //    currentbid += 100;
+                //    gameobject auctitem = gameobject.find("auctioninfo");
+                //    tmpro.textmeshpro textobj = auctitem.getcomponent<tmpro.textmeshpro>();
+                //    textobj.settext("current bid $" + currentbid.tostring());
+                //}
+
+
+                if (Input.GetKeyDown("tab"))
+                {
+                    if (!dashboard.activeInHierarchy)
+                    {
+                        dashboard.SetActive(true);
+                    }
+                    else
+                    {
+                        dashboard.SetActive(false);
                     }
 
-                    // backend change
-                    int itemId = int.Parse(selection.name.Split('_')[1]);
-                    //currentBid += 100;
-                    currentBids[itemId] += 100;
-
-                    // frontend change
-                    Transform itemCurrentBid = selection.Find("CurrentBid");
-                    TMPro.TextMeshPro bidTextObj = itemCurrentBid.GetComponent<TMPro.TextMeshPro>();
-                    //bidTextObj.SetText("Current Bid $" + currentBid.ToString());
-                    bidTextObj.SetText("Current Bid $" + currentBids[itemId].ToString());
                 }
-            }
 
-            //if (input.getkeydown("space"))
-            //{
-            //    currentbid += 100;
-            //    gameobject auctitem = gameobject.find("auctioninfo");
-            //    tmpro.textmeshpro textobj = auctitem.getcomponent<tmpro.textmeshpro>();
-            //    textobj.settext("current bid $" + currentbid.tostring());
-            //}
-
-
-            if (Input.GetKeyDown("tab"))
-            {
                 if (!dashboard.activeInHierarchy)
                 {
-                    dashboard.SetActive(true);
+                    Move();
                 }
-                else
-                {
-                    dashboard.SetActive(false);
-                }
-
             }
-
-            if (!dashboard.activeInHierarchy)
-            {
-                Move();
-            }
-
         }
+        else if (Input.GetKeyDown("space"))
+            {
+                boathAudioSource.Stop();
+                playerCamera.transform.parent = playerCameraWrapper.transform;
+            }
     }
 
     public void animateVanity(Animator anim) 
