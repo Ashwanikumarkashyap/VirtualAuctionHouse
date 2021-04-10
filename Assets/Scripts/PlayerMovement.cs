@@ -38,7 +38,7 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
     //the charachtercompononet for moving us
     CharacterController cc;
 
-    //Animator animator;
+    Animator animator;
     //bool isMoving = false;
     //public bool customMoving = false;
 
@@ -52,7 +52,7 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
 
     private void Start()
     {
-        //animator = GetComponentInChildren<Animator>();
+        animator = GetComponentInChildren<Animator>();
 
         boathAudioSource = GameObject.Find("Boat").GetComponent<AudioSource>();
         boathAudioSource.Stop();
@@ -235,15 +235,16 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
         Vector3 direction = new Vector3(horizontal, 0, vertical);
         Vector3 velocity = direction * speed;
 
-        //if (velocity.magnitude > 0.01f)
-        //{
-        //    isMoving = true;
-        //    //animator.SetBool("Moving", true);
-        //} else
-        //{
-        //    isMoving = false;
-        //    //animator.SetBool("Moving", false);
-        //}
+        if (velocity.magnitude > 0.01f)
+        {
+            //isMoving = true;
+            animator.SetBool("Moving", true);
+        }
+        else
+        {
+            //isMoving = false;
+            animator.SetBool("Moving", false);
+        }
 
         //changeWalkingAnimation();
 
