@@ -6,6 +6,10 @@ TagManager:
   tags:
   - AuctionItem
   - Avatar
+  - BidAmount
+  - AuctionItemInfo
+  - AuctionItemInfoPanel
+  - BidManager
   layers:
   - Default
   - TransparentFX

@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
+
         if (NetworkPlayerManager.localPlayerInstance == null)
         {
             //instantiate the correct player based on the team

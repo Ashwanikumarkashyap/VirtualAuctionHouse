@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
@@ -14,19 +15,8 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
     public Transform avatar;
     private float gravity = 10f;
 
-
     //now the camera so we can move it up and down
     public Transform cameraTransform;
-    float pitch = 0f;
-    [Range(1f, 90f)]
-    public float maxPitch = 85f;
-    [Range(-1f, -90f)]
-    public float minPitch = -85f;
-    [Range(0.5f, 5f)]
-    public float mouseSensitivity = 2f;
-
-
-
 
     public GameObject dashboard;
     public int[] currentBids;
@@ -39,15 +29,10 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
     CharacterController cc;
 
     Animator animator;
-    //bool isMoving = false;
-    //public bool customMoving = false;
-
-
     AudioSource boathAudioSource;
 
     public GameObject playerCameraWrapper;
     public GameObject playerCamera;
-    //GameObject BoatCamera;
 
 
     private void Start()
@@ -74,10 +59,10 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (photonView.IsMine)
             {
-                var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                var ray = playerCamera.transform;
                 RaycastHit hit;
 
-                if (Physics.Raycast(ray, out hit) && (Input.GetButton("js10") || Input.GetKeyDown("space")))
+                if (Physics.Raycast(ray.position, ray.forward, out hit) && (Input.GetButtonDown("js5") || Input.GetKeyDown("space") || Input.GetMouseButtonDown(0)))
 
                 {
                     var selection = hit.transform;
@@ -88,7 +73,12 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
                         int id = int.Parse(bid_id_value[1]) - 1;
                         int value = int.Parse(bid_id_value[2]);
                         currentBids[id] = currentBids[id] + value;
-                        UpdateAuctionUi();
+
+                        GameObject auctionItemInfo = GameObject.Find("AuctionItemInfoPanel_" + (id + 1).ToString());
+                        Transform currentBid = auctionItemInfo.transform.GetChild(1);
+                        TMPro.TextMeshProUGUI textComponent = currentBid.GetComponent<TMPro.TextMeshProUGUI>();
+                        textComponent.SetText("Current Bid: $" + currentBids[id].ToString());
+                        //UpdateAuctionUi();
                     }
                     if (selection.CompareTag("AuctionItem"))
                     {
@@ -127,16 +117,16 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
                                 break;
                         }
 
-                        // backend change
-                        int itemId = int.Parse(selection.name.Split('_')[1]);
-                        //currentBid += 100;
-                        currentBids[itemId] += 100;
+                        //// backend change
+                        //int itemId = int.Parse(selection.name.Split('_')[1]);
+                        ////currentBid += 100;
+                        //currentBids[itemId] += 100;
 
-                        // frontend change
-                        Transform itemCurrentBid = selection.Find("CurrentBid");
-                        TMPro.TextMeshPro bidTextObj = itemCurrentBid.GetComponent<TMPro.TextMeshPro>();
-                        //bidTextObj.SetText("Current Bid $" + currentBid.ToString());
-                        bidTextObj.SetText("Current Bid $" + currentBids[itemId].ToString());
+                        //// frontend change
+                        //Transform itemCurrentBid = selection.Find("CurrentBid");
+                        //TMPro.TextMeshPro bidTextObj = itemCurrentBid.GetComponent<TMPro.TextMeshPro>();
+                        ////bidTextObj.SetText("Current Bid $" + currentBid.ToString());
+                        //bidTextObj.SetText("Current Bid $" + currentBids[itemId].ToString());
                     }
                 }
 
@@ -149,7 +139,7 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
                 //}
 
 
-                if (Input.GetKeyDown("tab"))
+                if (Input.GetKeyDown("tab") || Input.GetButtonDown("js3"))
                 {
                     if (!dashboard.activeInHierarchy)
                     {
@@ -159,7 +149,6 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
                     {
                         dashboard.SetActive(false);
                     }
-
                 }
 
                 if (!dashboard.activeInHierarchy)
@@ -168,7 +157,7 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
                 }
             }
         }
-        else if (Input.GetKeyDown("space"))
+        else if (Input.GetKeyDown("space") || Input.GetButtonDown("js5") || Input.GetMouseButtonDown(0) || (Input.GetButton("js0")))
             {
                 boathAudioSource.Stop();
                 playerCamera.transform.parent = playerCameraWrapper.transform;
@@ -239,8 +228,6 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
 
     void Move()
     {
-
-
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
         Vector3 direction = new Vector3(horizontal, 0, vertical);
@@ -248,16 +235,13 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
 
         if (velocity.magnitude > 0.01f)
         {
-            //isMoving = true;
             animator.SetBool("Moving", true);
         }
         else
         {
-            //isMoving = false;
             animator.SetBool("Moving", false);
         }
 
-        //changeWalkingAnimation();
 
         velocity = Camera.main.transform.TransformDirection(velocity);
         velocity.y -= gravity;
@@ -278,9 +262,10 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
 
         for (int i = 0; i < auctionItemInfo.Length; i++)
         {
+            int itemId = int.Parse(auctionItemInfo[i].name.Split('_')[1]);
             Transform currentBid = auctionItemInfo[i].transform.GetChild(1);
             TMPro.TextMeshProUGUI textComponent = currentBid.GetComponent<TMPro.TextMeshProUGUI>();
-            textComponent.SetText("Current Bid: $" + currentBids[i].ToString());
+            textComponent.SetText("Current Bid: $" + currentBids[itemId-1].ToString());
 
         }
     }
@@ -313,14 +298,12 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (stream.IsWriting)
         {
-            //stream.SendNext(currentBid);
+            Debug.Log("sending" + currentBids[0]);
             stream.SendNext(currentBids);
-            //stream.SendNext(isMoving);
-            //stream.SendNext(customMoving);
         }
         else
         {
-            //currentBid = (int)stream.ReceiveNext();
+            Debug.Log("recieving" + currentBids);
             int[] updatedBids = (int[])stream.ReceiveNext();
             if (isBidChanged(updatedBids))
             {
@@ -330,21 +313,6 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
                 UpdateClientBids(currentBids);
             }
 
-
-            //isMoving = (bool)stream.ReceiveNext();
-            //customMoving = (bool)stream.ReceiveNext();
-
-            //GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-
-            //foreach (GameObject player in players)
-            //{
-            //    PlayerMovement pScript = player.GetComponent<PlayerMovement>();
-            //    pScript.currentBid = currentBid;
-            //}
-
-            //GameObject auctItem = GameObject.Find("CurrentBid");
-            //TMPro.TextMeshPro textObj = auctItem.GetComponent<TMPro.TextMeshPro>();
-            //textObj.SetText("Current Bid $" + currentBid.ToString());
         }
     }
 }

@@ -237,7 +237,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2699541615817244671}
   - component: {fileID: 2699541615817244656}
-  - component: {fileID: -3193611357834290494}
   - component: {fileID: 4288857115355893834}
   - component: {fileID: 5224797088747593586}
   - component: {fileID: -8060713691831515562}
@@ -285,24 +284,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-3193611357834290494
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2699541615817244657}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 75773a9e7fe83d2479dea1b0917cf7c6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gravity: -15
-  movementSpeed: 10
-  jumpSpeed: 10
-  maxPitch: 85
-  minPitch: -85
-  mouseSensitivity: 2
 --- !u!114 &4288857115355893834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -330,11 +311,8 @@ MonoBehaviour:
   speed: 20
   avatar: {fileID: 7996473668005807203}
   cameraTransform: {fileID: 2699541614725998675}
-  maxPitch: 85
-  minPitch: -85
-  mouseSensitivity: 2
   dashboard: {fileID: 6131989338171971800}
-  currentBids: 88130000d0070000e8030000d0070000b80b0000e8030000
+  currentBids: 10270000d0070000e8030000d0070000b80b0000e8030000
   playerCameraWrapper: {fileID: 2551634607726143516}
   playerCamera: {fileID: 2699541614725998678}
 --- !u!114 &-8060713691831515562
@@ -367,7 +345,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ObservedComponentsFoldoutOpen: 1
   Group: 0
-  prefixField: -1
+  prefixField: 0
   Synchronization: 3
   OwnershipTransfer: 0
   observableSearch: 2
@@ -1505,6 +1483,7 @@ GameObject:
   - component: {fileID: 162557002488300251}
   - component: {fileID: 5937071334256758773}
   - component: {fileID: 8456227814404183873}
+  - component: {fileID: 165266217180391421}
   m_Layer: 0
   m_Name: Avatar
   m_TagString: Untagged
@@ -1602,9 +1581,26 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: 5937071334256758773}
+  - {fileID: 165266217180391421}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &165266217180391421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7996473668006303811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1 &7996473668006303813
 GameObject:
   m_ObjectHideFlags: 0

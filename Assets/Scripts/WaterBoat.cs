@@ -39,9 +39,9 @@ public class WaterBoat : MonoBehaviour
         var steer = 0;
 
         //steer direction [-1,0,1]
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.A) || Input.GetAxis("Horizontal") < 0)
             steer = 1;
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.D) || Input.GetAxis("Horizontal") > 0)
             steer = -1;
 
 
@@ -53,16 +53,16 @@ public class WaterBoat : MonoBehaviour
         var targetVel = Vector3.zero;
 
         //forward/backward poewr
-        if (Input.GetKey(KeyCode.W))
+        if (Input.GetKey(KeyCode.W) || Input.GetAxis("Vertical") > 0)
             PhysicsHelper.ApplyForceToReachVelocity(Rigidbody, forward * MaxSpeed, Power);
-        if (Input.GetKey(KeyCode.S))
+        if (Input.GetKey(KeyCode.S) || Input.GetAxis("Vertical") < 0)
             PhysicsHelper.ApplyForceToReachVelocity(Rigidbody, forward * -MaxSpeed, Power);
 
         //Motor Animation // Particle system
         Motor.SetPositionAndRotation(Motor.position, transform.rotation * StartRotation * Quaternion.Euler(0, 30f * steer, 0));
         if (ParticleSystem != null)
         {
-            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S))
+            if (Input.GetKey(KeyCode.W) || Input.GetAxis("Vertical") > 0 || Input.GetKey(KeyCode.S) || Input.GetAxis("Vertical") < 0)
                 ParticleSystem.Play();
             else
                 ParticleSystem.Pause();
