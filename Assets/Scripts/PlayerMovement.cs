@@ -7,9 +7,6 @@ using UnityEngine.EventSystems;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
 {
-
-    //public int currentBid = 100;
-
     public float speed = 20f;
 
     public Transform avatar;
@@ -20,24 +17,24 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
 
     public GameObject dashboard;
     public int[] currentBids;
-    bool isDrawerOpen = false;
-    bool isDroneAwake = false;
-    bool isRobotWalking = false;
-    bool isSpartanRunning = false;
 
     //the charachtercompononet for moving us
     CharacterController cc;
 
-    Animator animator;
+    Animator walkingAnimator;
     AudioSource boathAudioSource;
 
     public GameObject playerCameraWrapper;
     public GameObject playerCamera;
 
+    AnimateItems animateItemsScript;
+
 
     private void Start()
     {
-        animator = GetComponentInChildren<Animator>();
+
+        animateItemsScript = GetComponent<AnimateItems>();
+        walkingAnimator = GetComponentInChildren<Animator>();
 
         boathAudioSource = GameObject.Find("Boat").GetComponent<AudioSource>();
         boathAudioSource.Stop();
@@ -93,51 +90,26 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
                                 boathAudioSource.Play();
                                 break;
                             case "VanityDeskWhite":
-                                anime = selection.Find("drawers").GetComponent<Animator>();
-                                animateVanity(anime);
+                                animateItemsScript.animateVanity(selection.Find("drawers").GetComponent<Animator>());
                                 break;
                             case "Classic_car":
-                                anime = selection.GetComponent<Animator>();
-                                animateVanity(anime);
+                                animateItemsScript.animateVanity(selection.GetComponent<Animator>());
                                 break;
                             case "Drone_Guard":
-                                anime = selection.GetComponent<Animator>();
-                                animateDrone(anime);
+                                animateItemsScript.animateDrone(selection.GetComponent<Animator>());
                                 break;
                             case "RobotSphere":
-                                anime = selection.GetComponent<Animator>();
-                                animateRobot(anime);
+                                animateItemsScript.animateRobot(selection.GetComponent<Animator>());
                                 break;
                             case "Spartan_Warrior":
-                                anime = selection.GetComponent<Animator>();
-                                animateSpartan(anime);
+                                animateItemsScript.animateSpartan(selection.GetComponent<Animator>());
                                 break;
                             default:
                                 Debug.Log("Default case");
                                 break;
                         }
-
-                        //// backend change
-                        //int itemId = int.Parse(selection.name.Split('_')[1]);
-                        ////currentBid += 100;
-                        //currentBids[itemId] += 100;
-
-                        //// frontend change
-                        //Transform itemCurrentBid = selection.Find("CurrentBid");
-                        //TMPro.TextMeshPro bidTextObj = itemCurrentBid.GetComponent<TMPro.TextMeshPro>();
-                        ////bidTextObj.SetText("Current Bid $" + currentBid.ToString());
-                        //bidTextObj.SetText("Current Bid $" + currentBids[itemId].ToString());
                     }
                 }
-
-                //if (input.getkeydown("space"))
-                //{
-                //    currentbid += 100;
-                //    gameobject auctitem = gameobject.find("auctioninfo");
-                //    tmpro.textmeshpro textobj = auctitem.getcomponent<tmpro.textmeshpro>();
-                //    textobj.settext("current bid $" + currentbid.tostring());
-                //}
-
 
                 if (Input.GetKeyDown("tab") || Input.GetButtonDown("js3"))
                 {
@@ -164,68 +136,6 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
             }
     }
 
-    public void animateVanity(Animator anim) 
-    {
-        if (!isDrawerOpen)
-        {
-            anim.SetTrigger("open");
-            isDrawerOpen = true;
-        } else
-        {
-            anim.SetTrigger("close");
-            isDrawerOpen = false;
-        }
-    }
-
-
-    public void animateCar(Animator anim)
-    {
-
-        anim.SetTrigger("leftDoor");
-        anim.SetTrigger("rightDoor");
-    }
-
-
-    public void animateDrone(Animator anim)
-    {
-        if (!isDroneAwake)
-        {
-            anim.SetTrigger("wake");
-            isDroneAwake = true;
-        } else
-        {
-            anim.SetTrigger("destroy");
-            isDroneAwake = false;
-        }
-
-    }
-
-    public void animateRobot(Animator anim)
-    {
-        if (!isRobotWalking)
-        {
-            anim.SetTrigger("Walk");
-            isRobotWalking = true;
-        }
-        else
-        {
-            anim.SetTrigger("Roll");
-            isRobotWalking = false;
-        }
-    }
-
-    public void animateSpartan(Animator anim)
-    {
-
-        if (isSpartanRunning) { 
-            anim.SetTrigger("run");
-            isSpartanRunning = true;
-        } else {
-            anim.SetTrigger("attack");
-            isSpartanRunning = false;
-        }
-    }
-
     void Move()
     {
         float horizontal = Input.GetAxis("Horizontal");
@@ -235,11 +145,11 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
 
         if (velocity.magnitude > 0.01f)
         {
-            animator.SetBool("Moving", true);
+            walkingAnimator.SetBool("Moving", true);
         }
         else
         {
-            animator.SetBool("Moving", false);
+            walkingAnimator.SetBool("Moving", false);
         }
 
 
@@ -248,8 +158,6 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
         cc.Move(velocity * Time.deltaTime);
 
         var CharacterRotation = cameraTransform.transform.rotation;
-        //cameraTransform.transform.parent.gameObject.transform.eulerAngles = new Vector3(0.0f, CharacterRotation.y, 0f);
-        //var CharacterRotation = cameraTransform.transform.localRotation;
         CharacterRotation.x = 0;
         CharacterRotation.z = 0;
 
@@ -298,16 +206,13 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (stream.IsWriting)
         {
-            Debug.Log("sending" + currentBids[0]);
             stream.SendNext(currentBids);
         }
         else
         {
-            Debug.Log("recieving" + currentBids);
             int[] updatedBids = (int[])stream.ReceiveNext();
             if (isBidChanged(updatedBids))
             {
-                Debug.Log("Writing for id: " + PhotonNetwork.LocalPlayer.UserId);
                 currentBids = updatedBids;
                 UpdateAuctionUi();
                 UpdateClientBids(currentBids);
