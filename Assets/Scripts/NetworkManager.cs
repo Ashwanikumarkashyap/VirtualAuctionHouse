@@ -8,6 +8,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     int AvatarId = 0;
     readonly int AvatersCount = 2;
+    public string closingTimeStr = "20210413T06:05:00Z";
+    public string startTimeStr = "20210413T06:05:00Z";
+    public bool closingTime = false;
 
     void Start()
     {
@@ -68,8 +71,19 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public void Play()
     {
-        Debug.Log("Button is Pressed");
-        JoinAuctionHouse(AvatarId);
+        if (closingTime)
+        {
+            System.DateTime closingTime = System.DateTime.ParseExact(closingTimeStr, "yyyyMMddTHH:mm:ssZ", System.Globalization.CultureInfo.InvariantCulture);
+            System.DateTime startTime = System.DateTime.ParseExact(startTimeStr, "yyyyMMddTHH:mm:ssZ", System.Globalization.CultureInfo.InvariantCulture);
+            if (startTime <= System.DateTime.Now && System.DateTime.Now <= closingTime)
+            {
+                JoinAuctionHouse(AvatarId);
+            }
+        } else
+        {
+            JoinAuctionHouse(AvatarId);
+        }
+        
         //PhotonNetwork.JoinRandomRoom();
     }
 

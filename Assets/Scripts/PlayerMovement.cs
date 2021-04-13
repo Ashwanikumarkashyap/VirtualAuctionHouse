@@ -88,7 +88,7 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
                         {
                             case "OldBoat":
                                 playerCamera.transform.parent = GameObject.Find("BoatCameraWrapper").transform;
-                                //GameObject.Find("Boat").transform.localPosition = new Vector3(-23f, 0f, -90f);
+                                //GameObject.Find("Boat").transform.localPosition = new Vector3(-0f, -0f, 0f);
                                 //playerCamera.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
                                 boathAudioSource.Play();
                                 break;
