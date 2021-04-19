@@ -866,7 +866,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player1: {fileID: 2699541615817244657, guid: b7e9a0629c8579a4b90513d5c3f4b203, type: 3}
-  player2: {fileID: 2699541615817244657, guid: 3d8b16b6aa155ee4fb2747c3f56fb1d9, type: 3}
+  player2: {fileID: 2699541615817244657, guid: 7873fffba188ded4780f8bd21c318afa, type: 3}
   closingTime: 0
   closingTimeStr: 20210413T06:05:00Z
 --- !u!4 &441570348
