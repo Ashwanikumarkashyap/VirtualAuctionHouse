@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using Photon.Realtime;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
@@ -39,6 +40,19 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public void Leave()
     {
+
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+
+        foreach (GameObject player in players)
+        {
+            PlayerMovement pScript = player.GetComponent<PlayerMovement>();
+            if (pScript.isLocalPlayer)
+            {
+                pScript.UpdateCart();
+                break;
+            }
+        }
+
         PhotonNetwork.LeaveRoom();
     }
 

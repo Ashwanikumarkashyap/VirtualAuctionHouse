@@ -233,8 +233,16 @@ MonoBehaviour:
   - Host
   - Host
   - Host
+  auctionItemNames:
+  - Vintage Car
+  - Fighter Drone
+  - Spartar Warrior
+  - Dancing Robot
+  - Vanity Desk
+  - Motor Boat
   playerCameraWrapper: {fileID: 2551634607726143516}
   playerCamera: {fileID: 2699541614725998678}
+  isLocalPlayer: 0
 --- !u!114 &-8060713691831515562
 MonoBehaviour:
   m_ObjectHideFlags: 0
