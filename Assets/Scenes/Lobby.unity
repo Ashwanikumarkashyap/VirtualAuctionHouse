@@ -1043,6 +1043,31 @@ PrefabInstance:
       propertyPath: m_margin.z
       value: -39.79222
       objectReference: {fileID: 0}
+    - target: {fileID: 4358119179783916620, guid: 3d5461b2c646d824bbb40152ba9d55c7,
+        type: 3}
+      propertyPath: m_Name
+      value: NameFieldText
+      objectReference: {fileID: 0}
+    - target: {fileID: 4358119179783916625, guid: 3d5461b2c646d824bbb40152ba9d55c7,
+        type: 3}
+      propertyPath: m_text
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4358119179783916625, guid: 3d5461b2c646d824bbb40152ba9d55c7,
+        type: 3}
+      propertyPath: m_fontSize
+      value: 22.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4358119179857789956, guid: 3d5461b2c646d824bbb40152ba9d55c7,
+        type: 3}
+      propertyPath: m_Name
+      value: EmailFieldText
+      objectReference: {fileID: 0}
+    - target: {fileID: 4358119180022887600, guid: 3d5461b2c646d824bbb40152ba9d55c7,
+        type: 3}
+      propertyPath: m_Name
+      value: MobileNoFieldText
+      objectReference: {fileID: 0}
     - target: {fileID: 4358119180087322918, guid: 3d5461b2c646d824bbb40152ba9d55c7,
         type: 3}
       propertyPath: m_LocalPosition.z
@@ -1108,6 +1133,11 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 4358119180185883459, guid: 3d5461b2c646d824bbb40152ba9d55c7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4358119180332473640, guid: 3d5461b2c646d824bbb40152ba9d55c7,
         type: 3}
       propertyPath: m_fontStyle
@@ -1153,11 +1183,21 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 4358119180360616805, guid: 3d5461b2c646d824bbb40152ba9d55c7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4358119180387294319, guid: 3d5461b2c646d824bbb40152ba9d55c7,
         type: 3}
       propertyPath: CanvasKeyboardObject
       value: 
       objectReference: {fileID: 34354055}
+    - target: {fileID: 4358119180633312547, guid: 3d5461b2c646d824bbb40152ba9d55c7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4358119180717723320, guid: 3d5461b2c646d824bbb40152ba9d55c7,
         type: 3}
       propertyPath: CanvasKeyboardObject
@@ -1483,6 +1523,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71c4f49ba8d414a49a218b6602ac56b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  closingTimeStr: 20210413T06:05:00Z
+  startTimeStr: 20210413T06:05:00Z
+  closingTime: 0
 --- !u!4 &1302976498
 Transform:
   m_ObjectHideFlags: 0

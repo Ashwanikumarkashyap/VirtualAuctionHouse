@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using UnityEngine.SceneManagement;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
@@ -20,13 +21,16 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }    
     }
 
-    public void JoinAuctionHouse(int avatar_id)
+    public void JoinAuctionHouse(int avatar_id, string name, string email, string mobile)
     {
         //do we already have a team?
         if (PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("id"))
         {
             //we already have a team- so switch teams
             PhotonNetwork.LocalPlayer.CustomProperties["id"] = avatar_id;
+            PhotonNetwork.LocalPlayer.CustomProperties["name"] = name;
+            PhotonNetwork.LocalPlayer.CustomProperties["email"] = email;
+            PhotonNetwork.LocalPlayer.CustomProperties["mobile"] = mobile;
         }
         else
         {
@@ -35,7 +39,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             //set the player properties of this client to the team they clicked
             ExitGames.Client.Photon.Hashtable playerProps = new ExitGames.Client.Photon.Hashtable
         {
-            { "id", avatar_id }
+            { "id", avatar_id }, { "name", name }, { "email", email }, { "mobile", mobile}
         };
             //set the property of Team to the value the user wants
             PhotonNetwork.SetPlayerCustomProperties(playerProps);
@@ -71,17 +75,21 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public void Play()
     {
+
+        string name = GameObject.Find("NameFieldText").GetComponent<TMPro.TextMeshProUGUI>().text;
+        string email = GameObject.Find("EmailFieldText").GetComponent<TMPro.TextMeshProUGUI>().text;
+        string mobile = GameObject.Find("MobileNoFieldText").GetComponent<TMPro.TextMeshProUGUI>().text;
         if (closingTime)
         {
             System.DateTime closingTime = System.DateTime.ParseExact(closingTimeStr, "yyyyMMddTHH:mm:ssZ", System.Globalization.CultureInfo.InvariantCulture);
             System.DateTime startTime = System.DateTime.ParseExact(startTimeStr, "yyyyMMddTHH:mm:ssZ", System.Globalization.CultureInfo.InvariantCulture);
             if (startTime <= System.DateTime.Now && System.DateTime.Now <= closingTime)
             {
-                JoinAuctionHouse(AvatarId);
+                JoinAuctionHouse(AvatarId, name, email, mobile);
             }
         } else
         {
-            JoinAuctionHouse(AvatarId);
+            JoinAuctionHouse(AvatarId, name, email, mobile);
         }
         
         //PhotonNetwork.JoinRandomRoom();
@@ -105,6 +113,5 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        
     }
 }

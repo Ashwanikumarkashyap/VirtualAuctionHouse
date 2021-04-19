@@ -17,6 +17,7 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
 
     public GameObject dashboard;
     public int[] currentBids;
+    public string[] currentBidders;
 
     //the charachtercompononet for moving us
     CharacterController cc;
@@ -44,7 +45,6 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
             GetComponentInChildren<Camera>().enabled = false;
             GetComponentInChildren<AudioListener>().enabled = false;
         }
-
         UpdateAuctionUi();
     }
 
@@ -59,7 +59,7 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
                 var ray = playerCamera.transform;
                 RaycastHit hit;
 
-                if (Physics.Raycast(ray.position, ray.forward, out hit) && (Input.GetButtonDown("js5") || Input.GetKeyDown("space") || Input.GetMouseButtonDown(0)))
+                if (Physics.Raycast(ray.position, ray.forward, out hit) && (Input.GetButtonUp("js5") || Input.GetKeyUp("space") || Input.GetMouseButtonUp(0)))
 
                 {
                     var selection = hit.transform;
@@ -75,6 +75,12 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
                         Transform currentBid = auctionItemInfo.transform.GetChild(1);
                         TMPro.TextMeshProUGUI textComponent = currentBid.GetComponent<TMPro.TextMeshProUGUI>();
                         textComponent.SetText("Current Bid: $" + currentBids[id].ToString());
+
+                        string name = (string)PhotonNetwork.LocalPlayer.CustomProperties["name"];
+
+                        TMPro.TextMeshProUGUI currentBidderText = auctionItemInfo.transform.GetChild(2).GetComponent<TMPro.TextMeshProUGUI>();
+                        currentBidders[id] = name;
+                        currentBidderText.SetText("Current Bidder: " + currentBidders[id]);
                         //UpdateAuctionUi();
                     }
                     if (selection.CompareTag("AuctionItem"))
@@ -111,7 +117,7 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
                     }
                 }
 
-                if (Input.GetKeyDown("tab") || Input.GetButtonDown("js3"))
+                if (Input.GetKeyUp("tab") || Input.GetButtonUp("js3"))
                 {
                     if (!dashboard.activeInHierarchy)
                     {
@@ -129,11 +135,11 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
                 }
             }
         }
-        else if (Input.GetKeyDown("space") || Input.GetButtonDown("js5") || Input.GetMouseButtonDown(0) || (Input.GetButton("js0")))
-            {
-                boathAudioSource.Stop();
-                playerCamera.transform.parent = playerCameraWrapper.transform;
-            }
+        else if (Input.GetKeyUp("space") || Input.GetButtonUp("js5") || Input.GetMouseButtonUp(0) || (Input.GetButtonUp("js0")))
+        {
+            boathAudioSource.Stop();
+            playerCamera.transform.parent = playerCameraWrapper.transform;
+        }
     }
 
     void Move()
@@ -172,8 +178,12 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
         {
             int itemId = int.Parse(auctionItemInfo[i].name.Split('_')[1]);
             Transform currentBid = auctionItemInfo[i].transform.GetChild(1);
+            
             TMPro.TextMeshProUGUI textComponent = currentBid.GetComponent<TMPro.TextMeshProUGUI>();
             textComponent.SetText("Current Bid: $" + currentBids[itemId-1].ToString());
+
+            TMPro.TextMeshProUGUI currentBiddder = auctionItemInfo[i].transform.GetChild(2).GetComponent<TMPro.TextMeshProUGUI>();
+            currentBiddder.SetText("Current Bidder: " + currentBidders[itemId - 1]);
 
         }
     }
@@ -207,13 +217,16 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
         if (stream.IsWriting)
         {
             stream.SendNext(currentBids);
+            stream.SendNext(currentBidders);
         }
         else
         {
             int[] updatedBids = (int[])stream.ReceiveNext();
+            string[] updatedBidders = (string[])stream.ReceiveNext();
             if (isBidChanged(updatedBids))
             {
                 currentBids = updatedBids;
+                currentBidders = updatedBidders;
                 UpdateAuctionUi();
                 UpdateClientBids(currentBids);
             }
@@ -221,4 +234,3 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 }
-

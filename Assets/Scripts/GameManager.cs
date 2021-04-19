@@ -22,7 +22,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             //instantiate the correct player based on the team
             int avatarId = (int)PhotonNetwork.LocalPlayer.CustomProperties["id"];
-            Debug.Log($"Team number {avatarId} is being instantiated");
             //instantiate the blue player if team is 0 and red if it is not
             if (avatarId == 0)
             {
@@ -45,7 +44,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public override void OnLeftRoom()
     {
-        PhotonNetwork.LoadLevel(0);
+        PhotonNetwork.LoadLevel(2);
     }
 
     // Update is called once per frame
@@ -58,6 +57,11 @@ public class GameManager : MonoBehaviourPunCallbacks
             {
                 Leave();
             }
+        }
+
+        if (Input.GetButtonDown("js11") || Input.GetKeyDown("e"))
+        {
+            Leave();
         }
     }
 }
