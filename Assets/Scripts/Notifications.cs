@@ -10,7 +10,7 @@ public class Notifications : MonoBehaviour
     public GameObject auctionTimeText;
     void Start()
     {
-        //notificationText = GameObject.Find("NotificationText");
+        notificationText = GameObject.Find("NotificationText");
         TMPro.TMP_Text textObj = notificationText.GetComponent<TMPro.TextMeshProUGUI>();
         textObj.SetText("0 Notifications");
         textObj.fontSizeMax = 16;
@@ -31,7 +31,5 @@ public class Notifications : MonoBehaviour
 
     public void Update()
     {
-        TMPro.TMP_Text textObj = auctionTimeText.GetComponent<TMPro.TextMeshProUGUI>();
-        textObj.SetText("GMT Time: " + System.DateTime.UtcNow.ToString("HH:MM"));
     }
 }

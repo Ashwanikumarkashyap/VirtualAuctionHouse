@@ -9,9 +9,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     int AvatarId = 0;
     readonly int AvatersCount = 2;
-    public string closingTimeStr = "20210413T06:05:00Z";
-    public string startTimeStr = "20210413T06:05:00Z";
-    public bool closingTime = false;
 
     void Start()
     {
@@ -23,10 +20,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public void JoinAuctionHouse(int avatar_id, string name, string email, string mobile)
     {
-        //do we already have a team?
         if (PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("id"))
         {
-            //we already have a team- so switch teams
             PhotonNetwork.LocalPlayer.CustomProperties["id"] = avatar_id;
             PhotonNetwork.LocalPlayer.CustomProperties["name"] = name;
             PhotonNetwork.LocalPlayer.CustomProperties["email"] = email;
@@ -34,18 +29,12 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
         else
         {
-            //we dont have a team yet- create the custom property and set it
-            //0 for blue, 1 for red
-            //set the player properties of this client to the team they clicked
             ExitGames.Client.Photon.Hashtable playerProps = new ExitGames.Client.Photon.Hashtable
         {
             { "id", avatar_id }, { "name", name }, { "email", email }, { "mobile", mobile}
         };
-            //set the property of Team to the value the user wants
             PhotonNetwork.SetPlayerCustomProperties(playerProps);
         }
-
-        //join the random room and launch game- the GameManager will spawn the correct model in based on the property
         PhotonNetwork.JoinRandomRoom();
     }
 
@@ -79,18 +68,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         string name = GameObject.Find("NameFieldText").GetComponent<TMPro.TextMeshProUGUI>().text;
         string email = GameObject.Find("EmailFieldText").GetComponent<TMPro.TextMeshProUGUI>().text;
         string mobile = GameObject.Find("MobileNoFieldText").GetComponent<TMPro.TextMeshProUGUI>().text;
-        if (closingTime)
-        {
-            System.DateTime closingTime = System.DateTime.ParseExact(closingTimeStr, "yyyyMMddTHH:mm:ssZ", System.Globalization.CultureInfo.InvariantCulture);
-            System.DateTime startTime = System.DateTime.ParseExact(startTimeStr, "yyyyMMddTHH:mm:ssZ", System.Globalization.CultureInfo.InvariantCulture);
-            if (startTime <= System.DateTime.Now && System.DateTime.Now <= closingTime)
-            {
-                JoinAuctionHouse(AvatarId, name, email, mobile);
-            }
-        } else
-        {
-            JoinAuctionHouse(AvatarId, name, email, mobile);
-        }
+        JoinAuctionHouse(AvatarId, name, email, mobile);
         
         //PhotonNetwork.JoinRandomRoom();
     }

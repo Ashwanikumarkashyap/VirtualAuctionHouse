@@ -18,8 +18,10 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
 
     public GameObject dashboard;
     public int[] currentBids;
-    public string[] currentBidders;
+    public string[] currentBidders = {"Host", "Host", "Host", "Host", "Host", "Host"};
     public string[] auctionItemNames;
+    public string[] previousBids = { "-", "-", "-", "-", "-", "-" };
+    public string[] previousBidders = { "-", "-", "-", "-", "-", "-" };
 
     //the charachtercompononet for moving us
     CharacterController cc;
@@ -32,6 +34,9 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
 
     AnimateItems animateItemsScript;
     public bool isLocalPlayer = false;
+
+    public GameObject auctionTimeText;
+    public float auctionTime = 3600;
 
 
     private void Start()
@@ -57,6 +62,18 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
     void Update()
     {
         Camera c = gameObject.GetComponentInChildren<Camera>();
+
+        if (auctionTime > 0)
+        {
+            auctionTime -= Time.deltaTime;
+            DisplayTime(auctionTime);
+        } else
+        {
+            GameManager mgr = GameObject.Find("GameManager").GetComponent<GameManager>();
+            mgr.Leave();
+        }
+
+
         if (gameObject.GetComponentInChildren<Camera>() != null)
         {
             if (photonView.IsMine)
@@ -74,23 +91,27 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
                         string[] bid_id_value = bidClicked.Split('_');
                         int id = int.Parse(bid_id_value[1]) - 1;
                         int value = int.Parse(bid_id_value[2]);
+                        previousBids[id] = currentBids[id].ToString();
                         currentBids[id] = currentBids[id] + value;
 
                         GameObject auctionItemInfo = GameObject.Find("AuctionItemInfoPanel_" + (id + 1).ToString());
                         Transform currentBid = auctionItemInfo.transform.GetChild(1);
                         TMPro.TextMeshProUGUI textComponent = currentBid.GetComponent<TMPro.TextMeshProUGUI>();
-                        //textComponent.SetText("Current Bid: $" + currentBids[id].ToString());
+                        textComponent.SetText("Current Bid: $" + currentBids[id].ToString());
 
                         string name = (string)PhotonNetwork.LocalPlayer.CustomProperties["name"];
 
                         TMPro.TextMeshProUGUI currentBidderText = auctionItemInfo.transform.GetChild(2).GetComponent<TMPro.TextMeshProUGUI>();
+                        previousBidders[id] = currentBidders[id];
                         currentBidders[id] = name;
-                        //currentBidderText.SetText("Current Bidder: " + currentBidders[id]);
+                        currentBidderText.SetText("Current Bidder: " + currentBidders[id]);
 
+
+                        // RPC call
                         PhotonView photonView = PhotonView.Get(this);
-                        photonView.RPC("RecieveUpdatedBids", RpcTarget.All, currentBids, currentBidders);
+                        photonView.RPC("RecieveUpdatedBids", RpcTarget.All, currentBids, currentBidders, previousBids, previousBidders);
 
-                        UpdateAuctionUi();
+                        //UpdateAuctionUi();
                     }
                     if (selection.CompareTag("AuctionItem"))
                     {
@@ -130,6 +151,7 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
                 {
                     if (!dashboard.activeInHierarchy)
                     {
+                        updateAuctionBoard();
                         dashboard.SetActive(true);
                     }
                     else
@@ -149,6 +171,21 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
             boathAudioSource.Stop();
             playerCamera.transform.parent = playerCameraWrapper.transform;
         }
+    }
+
+
+    void DisplayTime(float timeToDisplay)
+    {
+
+        timeToDisplay += 1;
+
+        float minutes = Mathf.FloorToInt(timeToDisplay / 60);
+        float seconds = Mathf.FloorToInt(timeToDisplay % 60);
+
+        string time = string.Format("{0:00}:{1:00}", minutes, seconds);
+
+        TMPro.TMP_Text textObj = auctionTimeText.GetComponent<TMPro.TextMeshProUGUI>();
+        textObj.SetText("Time left: " + time);
     }
 
     void Move()
@@ -181,6 +218,7 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
 
     public void UpdateAuctionUi()
     {
+
         GameObject[] auctionItemInfo = GameObject.FindGameObjectsWithTag("AuctionItemInfoPanel");
 
         for (int i = 0; i < auctionItemInfo.Length; i++)
@@ -194,6 +232,25 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
             TMPro.TextMeshProUGUI currentBiddder = auctionItemInfo[i].transform.GetChild(2).GetComponent<TMPro.TextMeshProUGUI>();
             currentBiddder.SetText("Current Bidder: " + currentBidders[itemId - 1]);
 
+        }
+    }
+    public void updateAuctionBoard()
+    {
+        Transform itemList = dashboard.transform.GetChild(1).GetChild(1).GetChild(1);
+        int itemCount = itemList.childCount;
+        for (int i = 0; i < itemCount; i++)
+        {
+            Transform item = itemList.GetChild(i);
+            UnityEngine.UI.Text itemName = item.GetChild(0).GetComponent<UnityEngine.UI.Text>();
+            UnityEngine.UI.Text Cbid = item.GetChild(1).GetComponent<UnityEngine.UI.Text>();
+            UnityEngine.UI.Text Cbidder = item.GetChild(2).GetComponent<UnityEngine.UI.Text>();
+            UnityEngine.UI.Text pbid = item.GetChild(3).GetComponent<UnityEngine.UI.Text>();
+            UnityEngine.UI.Text pbidder = item.GetChild(4).GetComponent<UnityEngine.UI.Text>();
+            itemName.text = auctionItemNames[i];
+            Cbid.text = currentBids[i].ToString();
+            Cbidder.text = currentBidders[i];
+            pbid.text = previousBids[i];
+            pbidder.text = previousBidders[i];
         }
     }
 
@@ -210,7 +267,7 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    public void UpdateClientBids(int[] currentBids)
+    public void UpdateClientBids(int[] currentBids, string[] currentBidders, string[] previousBids, string[] previousBidders)
     {
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
 
@@ -218,6 +275,10 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
         {
             PlayerMovement pScript = player.GetComponent<PlayerMovement>();
             pScript.currentBids = currentBids;
+            pScript.currentBidders = currentBidders;
+            pScript.previousBids = previousBids;
+            pScript.previousBidders = previousBidders;
+            pScript.updateAuctionBoard();
         }
     }
 
@@ -267,28 +328,45 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
 
 
     [PunRPC]
-    void RecieveUpdatedBids(int[] updatedBids, string[] updatedBidders)
+    void RecieveUpdatedBids(int[] updatedBids, string[] updatedBidders, string[] updatedPreviousBids, string[] updatedPreviousBidders)
     {
-
         if (isBidChanged(updatedBids))
         {
             for (int i = 0; i < updatedBids.Length; i++)
             {
                 if (updatedBids[i] > currentBids[i])
                 {
+                    previousBids[i] = updatedPreviousBids[i];
                     currentBids[i] = updatedBids[i];
+                    previousBidders[i] = updatedPreviousBidders[i];
                     currentBidders[i] = updatedBidders[i];
                 }
             }
             UpdateAuctionUi();
-            UpdateClientBids(currentBids);
+            UpdateClientBids(currentBids, currentBidders, previousBids, previousBidders);
+        }
+    }
+
+    [PunRPC]
+    void syncAuctionTime(float auctionTime)
+    {
+        this.auctionTime = auctionTime;
+
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+
+        foreach (GameObject player in players)
+        {
+            PlayerMovement pScript = player.GetComponent<PlayerMovement>();
+            pScript.auctionTime = auctionTime;
         }
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         PhotonView photonView = PhotonView.Get(this);
-        photonView.RPC("RecieveUpdatedBids", RpcTarget.All, currentBids, currentBidders);
+        photonView.RPC("RecieveUpdatedBids", RpcTarget.All, currentBids, currentBidders, previousBids, previousBidders);
+
+        photonView.RPC("syncAuctionTime", RpcTarget.All, auctionTime);
 
         base.OnPlayerEnteredRoom(newPlayer);
     }

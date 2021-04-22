@@ -18,14 +18,14 @@ public class PushToTalk : MonoBehaviourPun
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown("v"))
+        if (Input.GetKeyDown("v") || Input.GetButtonDown("js2"))
         {
             if (view.IsMine)
             {
                 VoiceRecorder.TransmitEnabled = true;
             }
         }
-        else if (Input.GetKeyUp("v"))
+        else if (Input.GetKeyUp("v") || Input.GetButtonUp("js2"))
         {
             if (view.IsMine)
             {
