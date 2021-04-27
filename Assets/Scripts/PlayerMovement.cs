@@ -23,6 +23,7 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
     public string[] previousBids = { "-", "-", "-", "-", "-", "-" };
     public string[] previousBidders = { "-", "-", "-", "-", "-", "-" };
 
+    public bool[] itemsToWatch = { false, false, false, false, false, false };
     //the charachtercompononet for moving us
     CharacterController cc;
 
@@ -62,7 +63,7 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
     void Update()
     {
         Camera c = gameObject.GetComponentInChildren<Camera>();
-
+        
         if (auctionTime > 0)
         {
             auctionTime -= Time.deltaTime;
@@ -78,6 +79,7 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (photonView.IsMine)
             {
+                CreateVisualCues();
                 var ray = playerCamera.transform;
                 RaycastHit hit;
 
@@ -121,6 +123,11 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
                         {
                             case "OldBoat":
                                 playerCamera.transform.parent = GameObject.Find("BoatCameraWrapper").transform;
+                                var outline = selection.gameObject.GetComponent<Outline>();
+                                if (outline)
+                                {
+                                    outline.enabled = false;
+                                }
                                 //GameObject.Find("Boat").transform.localPosition = new Vector3(-0f, -0f, 0f);
                                 //playerCamera.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
                                 boathAudioSource.Play();
@@ -145,6 +152,23 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
                                 break;
                         }
                     }
+                    if (selection.CompareTag("WatchList"))
+                    {
+                        GameObject watch_button = GameObject.Find(selection.name);
+                        int item = int.Parse(selection.name.Split('_')[1]);
+                        if (itemsToWatch[item-1])
+                        {
+                            itemsToWatch[item-1] = false;
+                            watch_button.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>().text = "+WatchList";
+                            watch_button.transform.GetComponent<UnityEngine.UI.Image>().color = new Color(72.0f/255.0f, 233.0f/255.0f, 233.0f/255.0f);
+                        }
+                        else
+                        {
+                            itemsToWatch[item-1] = true;
+                            watch_button.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>().text = "-WatchList";
+                            watch_button.transform.GetComponent<UnityEngine.UI.Image>().color = new Color(229.0f/255.0f, 227.0f/255.0f, 76.0f/255.0f);
+                        }   
+                    }
                 }
 
                 if (Input.GetKeyUp("tab") || Input.GetButtonUp("js3"))
@@ -152,6 +176,7 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
                     if (!dashboard.activeInHierarchy)
                     {
                         updateAuctionBoard();
+                        updateWatchList();
                         dashboard.SetActive(true);
                     }
                     else
@@ -173,7 +198,43 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
+    void CreateVisualCues()
+    {
+        var ray = playerCamera.transform;
+        RaycastHit hit;
+        GameObject[] auctionItems = GameObject.FindGameObjectsWithTag("AuctionItem");
+        GameObject[] subAuctionItems = GameObject.FindGameObjectsWithTag("SubAuctionItem");
+        foreach (GameObject auction in auctionItems)
+        {
+            var outline = auction.GetComponent<Outline>();
+            if (outline)
+            {
+                outline.enabled = false;
+            }
+            
+        }
+        foreach (GameObject subauction in subAuctionItems)
+        {
+            var outline = subauction.GetComponent<Outline>();
+            if (outline)
+            {
+                outline.enabled = false;
+            }
 
+        }
+        if (Physics.Raycast(ray.position, ray.forward, out hit)) {
+            var selection = hit.transform;
+            if (selection.CompareTag("AuctionItem") || selection.CompareTag("SubAuctionItem"))
+            {
+                var outline = selection.gameObject.GetComponent<Outline>();
+                if (outline)
+                {
+                    outline.enabled = true;
+                }
+            }
+        }
+                
+    }
     void DisplayTime(float timeToDisplay)
     {
 
@@ -251,6 +312,42 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
             Cbidder.text = currentBidders[i];
             pbid.text = previousBids[i];
             pbidder.text = previousBidders[i];
+        }
+    }
+
+    public void updateWatchList()
+    {
+        
+        Transform itemList = dashboard.transform.GetChild(1).GetChild(0).GetChild(1);
+        int itemCount = itemList.childCount;
+
+            for (int i = 0; i < itemCount; i++)
+        {
+            Transform item = itemList.GetChild(i);
+            UnityEngine.UI.Text itemName = item.GetChild(0).GetComponent<UnityEngine.UI.Text>();
+            UnityEngine.UI.Text Cbid = item.GetChild(1).GetComponent<UnityEngine.UI.Text>();
+            UnityEngine.UI.Text Cbidder = item.GetChild(2).GetComponent<UnityEngine.UI.Text>();
+            UnityEngine.UI.Text pbid = item.GetChild(3).GetComponent<UnityEngine.UI.Text>();
+            UnityEngine.UI.Text pbidder = item.GetChild(4).GetComponent<UnityEngine.UI.Text>();
+            itemName.text = auctionItemNames[i];
+            Cbid.text = currentBids[i].ToString();
+            Cbidder.text = currentBidders[i];
+            pbid.text = previousBids[i];
+            pbidder.text = previousBidders[i];
+        }
+
+        for (int x = 0; x < itemCount; x++)
+        {
+            Transform item = itemList.GetChild(x);
+            if (itemsToWatch[x])
+            {     
+                item.gameObject.SetActive(true);
+            }
+            else
+            {
+                item.gameObject.SetActive(false);
+            }
+
         }
     }
 
