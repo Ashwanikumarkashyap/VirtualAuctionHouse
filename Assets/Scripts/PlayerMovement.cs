@@ -39,12 +39,17 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
     public GameObject auctionTimeText;
     public float auctionTime = 3600;
 
+    public GameObject notificationText;
+
 
     private void Start()
     {
 
         animateItemsScript = GetComponent<AnimateItems>();
         walkingAnimator = GetComponentInChildren<Animator>();
+
+        TMPro.TMP_Text textObj = notificationText.GetComponent<TMPro.TextMeshProUGUI>();
+        textObj.SetText("0 Watchlist Updates");
 
         boathAudioSource = GameObject.Find("Boat").GetComponent<AudioSource>();
         boathAudioSource.Stop();
@@ -63,17 +68,9 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
     void Update()
     {
         Camera c = gameObject.GetComponentInChildren<Camera>();
-        
-        if (auctionTime > 0)
-        {
-            auctionTime -= Time.deltaTime;
-            DisplayTime(auctionTime);
-        } else
-        {
-            GameManager mgr = GameObject.Find("GameManager").GetComponent<GameManager>();
-            mgr.Leave();
-        }
 
+
+        SetAuctionClock();
 
         if (gameObject.GetComponentInChildren<Camera>() != null)
         {
@@ -196,6 +193,27 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
             boathAudioSource.Stop();
             playerCamera.transform.parent = playerCameraWrapper.transform;
         }
+    }
+
+    void SetAuctionClock()
+    {
+        if (auctionTime > 0)
+        {
+            auctionTime -= Time.deltaTime;
+            DisplayTime(auctionTime);
+        }
+        else
+        {
+            GameManager mgr = GameObject.Find("GameManager").GetComponent<GameManager>();
+            mgr.Leave();
+        }
+    }
+
+    public void ClearNotification()
+    {
+        TMPro.TMP_Text textObj = notificationText.GetComponent<TMPro.TextMeshProUGUI>();
+        notificationText.transform.parent.parent.gameObject.SetActive(false);
+        textObj.SetText("0 Watchlist Updates");
     }
 
     void CreateVisualCues()
@@ -371,6 +389,13 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
         foreach (GameObject player in players)
         {
             PlayerMovement pScript = player.GetComponent<PlayerMovement>();
+
+            //if (pScript.isLocalPlayer)
+            //{
+                
+                //pScript.SetNotification(changedCount);
+            //}
+
             pScript.currentBids = currentBids;
             pScript.currentBidders = currentBidders;
             pScript.previousBids = previousBids;
@@ -381,16 +406,29 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
 
     public bool isBidChanged(int[] updatedBids)
     {
-
+        bool isBidChanged = false;
         for (int i = 0; i < updatedBids.Length; i++)
         {
             if (updatedBids[i] > currentBids[i])
             {
-                return true;
+                isBidChanged = true;
+
+                GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+                foreach (GameObject player in players)
+                {
+                    PlayerMovement pScript = player.GetComponent<PlayerMovement>();
+                    if (pScript.isLocalPlayer && pScript.itemsToWatch[i])
+                    {
+                        TMPro.TMP_Text textObj = pScript.notificationText.GetComponent<TMPro.TextMeshProUGUI>();
+                        int notiCOunt = int.Parse(textObj.text.Split(' ')[0]) + 1;
+                        textObj.SetText(notiCOunt.ToString() + " Watchlist Updates");
+                        pScript.notificationText.transform.parent.parent.gameObject.SetActive(true);
+                    }
+                }
             }
         }
-
-        return false;
+        
+        return isBidChanged;
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

@@ -2,6 +2,9 @@
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
+using System.Text.RegularExpressions;
+using System.Net.Mail;
+using System;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
@@ -9,6 +12,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     int AvatarId = 0;
     readonly int AvatersCount = 2;
+    public GameObject nameError;
+    public GameObject emailError;
+    public GameObject mobileError;
 
     void Start()
     {
@@ -68,7 +74,43 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         string name = GameObject.Find("NameFieldText").GetComponent<TMPro.TextMeshProUGUI>().text;
         string email = GameObject.Find("EmailFieldText").GetComponent<TMPro.TextMeshProUGUI>().text;
         string mobile = GameObject.Find("MobileNoFieldText").GetComponent<TMPro.TextMeshProUGUI>().text;
-        JoinAuctionHouse(AvatarId, name, email, mobile);
+        Regex mobileRgx = new Regex(@"\(?\d{3}\)?-? *\d{3}-? *-?\d{4}");
+        Regex emailRgx = new Regex(@"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
+
+        bool isFormValid = true;
+
+        if (name == "")
+        {
+            nameError.SetActive(true);
+            isFormValid = false;
+
+        } else
+        {
+            nameError.SetActive(false);
+        }
+
+        if (email == "" || !emailRgx.IsMatch(email))
+        {
+            emailError.SetActive(true);
+            isFormValid = false;
+        }
+        else
+        {
+            emailError.SetActive(false);
+        }
+
+        if (mobile == "" || !mobileRgx.IsMatch(mobile))
+        {
+            mobileError.SetActive(true);
+            isFormValid = false;
+        }
+        else
+        {
+            mobileError.SetActive(false);
+        }
+
+        if (isFormValid)
+            JoinAuctionHouse(AvatarId, name, email, mobile);
         
         //PhotonNetwork.JoinRandomRoom();
     }
