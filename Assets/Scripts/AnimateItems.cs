@@ -92,5 +92,14 @@ public class AnimateItems : MonoBehaviour
         }
     }
 
+    public void animateLeftCarDoor(Animator anim)
+    {
+        anim.SetTrigger("leftDoor");
+    }
+    public void animateRightCarDoor(Animator anim)
+    {
+        anim.SetTrigger("rightDoor");
+    }
+
 
 }

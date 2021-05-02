@@ -112,7 +112,7 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
 
                         //UpdateAuctionUi();
                     }
-                    if (selection.CompareTag("AuctionItem"))
+                    if (selection.CompareTag("AuctionItem") || selection.CompareTag("SubAuctionItem"))
                     {
                         string AuctionItemName = selection.name;
                         Animator anime;
@@ -143,6 +143,14 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
                                 break;
                             case "Spartan_Warrior":
                                 animateItemsScript.animateSpartan(selection.GetComponent<Animator>());
+                                break;
+                            case "R_car_door":
+                                // Debug.Log("right car door clicked");
+                                animateItemsScript.animateRightCarDoor(selection.transform.parent.GetComponent<Animator>());
+                                break;
+                            case "car_L_door":
+                                Debug.Log("left car door clicked");
+                                animateItemsScript.animateLeftCarDoor(selection.transform.parent.parent.GetComponent<Animator>());
                                 break;
                             default:
                                 Debug.Log("Default case");
