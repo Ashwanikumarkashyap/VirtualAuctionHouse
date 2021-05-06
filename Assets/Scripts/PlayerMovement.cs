@@ -37,7 +37,7 @@ public class PlayerMovement : MonoBehaviourPunCallbacks, IPunObservable
     public bool isLocalPlayer = false;
 
     public GameObject auctionTimeText;
-    public float auctionTime = 3600;
+    public float auctionTime = 480;
 
     public GameObject notificationText;
 

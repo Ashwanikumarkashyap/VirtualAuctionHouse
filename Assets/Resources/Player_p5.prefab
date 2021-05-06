@@ -259,7 +259,7 @@ MonoBehaviour:
   playerCamera: {fileID: 2699541614725998678}
   isLocalPlayer: 0
   auctionTimeText: {fileID: 4561270306036484708}
-  auctionTime: 3600
+  auctionTime: 600
   notificationText: {fileID: 4861740128969409173}
 --- !u!114 &-8060713691831515562
 MonoBehaviour:
@@ -771,7 +771,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 1
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -31.99056, y: 0, z: -30.239084, w: 0}
+  m_margin: {x: -34.578644, y: 0, z: -36.407238, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -808,7 +808,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4861740128969409170
 RectTransform:
   m_ObjectHideFlags: 0
@@ -826,7 +826,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 5.8, y: -0.8}
+  m_AnchoredPosition: {x: 7.8600006, y: -0.8}
   m_SizeDelta: {x: 1031.25, y: 413.75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &4861740128969409171

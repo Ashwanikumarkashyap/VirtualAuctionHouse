@@ -701,7 +701,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player1: {fileID: 2699541615817244657, guid: b7e9a0629c8579a4b90513d5c3f4b203, type: 3}
-  player2: {fileID: 2699541615817244657, guid: d4d4d45496dd2764ea074d6fe4de248a, type: 3}
+  player2: {fileID: 2699541615817244657, guid: 58fabb08a0cbf8b4cb067ec3a11cff75, type: 3}
 --- !u!4 &441570348
 Transform:
   m_ObjectHideFlags: 0
