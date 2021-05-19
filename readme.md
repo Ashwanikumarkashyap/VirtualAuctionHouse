@@ -1,4 +1,4 @@
-**[Virtual Auction House - Unity VR in multiplayer world]{.underline}**
+# Virtual Auction House - Unity VR in multiplayer world
 
 To play the game just download the apk file provided in the folder. And
 use Google Cardboard along with the Bluetooth controller provided by the
@@ -48,8 +48,7 @@ We have 3 scenes in our auction house VR project.
     The user can also willingly exit the action house and go to the
     checkout scene by pressing the menu button.
 
-**[Interaction Techniques]{.underline} : (**Gaze based and controller
-for selection)
+## Interaction Techniques : Gaze based and controller for selection
 
 The user wears a google cardboard and handheld controller (provided by
 the professor) to perform action in the auction house app. To move
@@ -66,7 +65,7 @@ the controller. When the auction board is open the movement of the
 player is restricted. Also auction board and watchlist is not visible to
 other players in the game.
 
-**[Multi-player]{.underline}**
+## Multi-player
 
 We are using a "photon unity networking 2 (PUN2)" framework for
 multiplayer interaction and data synchronization. In our auction house
@@ -77,7 +76,7 @@ increases bid, other users will be able to see that in real time (with
 minimum lag) with the name of the current bidder. Thus, the bidding
 system is working in real-time across multi-user.
 
-**[Multiplayer Voice Interaction]{.underline}**
+## Multiplayer Voice Interaction
 
 With the help of the "photon unity networking 2 voice (PUN2 voice)"
 framework, a user can interact with all the other users of the auction
@@ -89,73 +88,3 @@ voice.
 **NOTE:** To enable voice interaction, the user first has to give the
 microphone access permission to the installed application before
 launching the app in the phone.
-
-**[Our 3 preliminary deliverables were:]{.underline}**
-
-1.  Build auction space and auction items.
-
--   One Auction Space
-
--   6 Auction items in the house
-
-2.  Let the users interact with the auction item
-
--   A panel next to each item which has information regarding the item,
-    current bid, current bidder etc.
-
-3.  Bidding on the item.
-
--   The user can use the bid option to bid on the item using the
-    Interactive Bidding System.
-
--   The interactive bidding system will have some bids on which the user
-    can click using the controller and increase the bid.
-
--   The increased bid and the current bidder is updated locally.
-
-**[Our three final deliverables were:]{.underline}**
-
--   The backend should be complete.
-
-    -   The user data gets stored in the backend and gets displayed
-        using the UI elements.
-
--   Multiplayer Platform
-
-    -   Support connection between multiple Google Cardboard users via
-        Unity.
-
-    -   Any change that a user makes in the bid will be reflected in
-        Real Time to the other users.
-
-    -   Voice Interaction between users.
-
-        -   Players can interact using voice chats in the Auction house.
-
--   Users watchlist and shopping cart
-
-    -   Users can add the items in the watchlist and get notifications
-        when the price increases.
-
-    -   The items bought by the user will be shown in individual
-        shopping cart.
-
-    -   Real Time Updates
-
-        -   The users will be able to see the current bidding price on
-            each item.
-
-**[Extra deliverables:]{.underline}**
-
-1.  Multiplayer sync: Upto 4 players can join the game and interact and
-    bid on the item at the same time and their movement is synced.
-
-2.  Player Animation: We can see the animation (movement) of the other
-    player when he/she is moving in the game.
-
-3.  Visual Cues for intractable Auction items.
-
-4.  Animation for various auction items.
-
-5.  We can do a test drive for one of the auction items (Boat) in the
-    auction house.
