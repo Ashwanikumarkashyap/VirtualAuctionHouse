@@ -1,8 +1,7 @@
 # Virtual Auction House - Unity VR in multiplayer world
 
 To play the game just download the apk file provided in the folder. And
-use Google Cardboard along with the Bluetooth controller provided by the
-professor. The target device is an Android phone. Android versions of
+use Google Cardboard along with the Bluetooth controller. The target device is an Android phone. Android versions of
 the mobile phone should be greater than or equal to Android KitKat.
 
 We have 3 scenes in our auction house VR project.
